@@ -3442,6 +3442,29 @@ async function checkForUpdate(opts) {
   }
 }
 
+// בדיקת עדכון תקופתית. כשהעדכון האוטומטי פעיל — מורידים ומתקינים (אותן בדיקות
+// מקור/גרסה/SHA-256 של ההתקנה הידנית); ניסיון אחד לכל גרסה בכל הרצה, ואם נכשל
+// מציגים את הודעת העדכון הרגילה כדי שהמשתמש יוכל להתקין ידנית.
+let autoUpdateBusy = false;
+let autoUpdateTried = null;
+async function updateTick() {
+  if (!UPDATE_URL || autoUpdateBusy) return;
+  autoUpdateBusy = true;
+  try {
+    const auto = schedule.autoUpdate !== false;
+    const chk = await checkForUpdate({ silent: auto });
+    if (!auto || !chk.ok || !chk.update || autoUpdateTried === chk.update.version) return;
+    autoUpdateTried = chk.update.version;
+    logEvent('update-auto-start', { version: chk.update.version });
+    const res = await downloadAndInstallUpdate();
+    if (!res || !res.ok) {
+      logEvent('update-auto-fail', { version: chk.update.version, error: String((res && res.error) || '') });
+      notifyUpdate(chk.update);
+    }
+  } catch { /* אופליין — שקט */ }
+  finally { autoUpdateBusy = false; }
+}
+
 /* ================= הורדה והתקנה אוטומטית של עדכון =================
    במקום לפתוח את דף ההורדה בדפדפן — "הורד והתקן עכשיו" מוריד את
    המתקין ישירות לתיקיית Temp, מוודא שהקובץ תקין (EXE בגודל סביר),
@@ -5857,7 +5880,11 @@ async function gracefulQuit() {
       setTimeout(maybeEscalatePrivilegedSetup, 4000);
 
       // בדיקת עדכונים ברקע (אינה חוסמת, אופליין = שקט) — רק אם המפתח הגדיר מקור
-      if (UPDATE_URL) setTimeout(() => checkForUpdate(), 8000);
+      if (UPDATE_URL) {
+        setTimeout(() => updateTick(), 8000);
+        const t = setInterval(() => updateTick(), 6 * 3600 * 1000);
+        if (t.unref) t.unref();
+      }
 
       app.on('activate', () => showMainWindow());
     });

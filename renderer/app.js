@@ -735,6 +735,7 @@ function applySettingsToUI() {
   $('recoveryEmail').value = schedule.recoveryEmail || '';
   $('blockMessage').value = schedule.blockMessage || '';
   $('netIconToggle').checked = schedule.showNetIcon !== false;
+  if ($('autoUpdateToggle')) $('autoUpdateToggle').checked = schedule.autoUpdate !== false;
   $('torahQuotesToggle').checked = schedule.showTorahQuotes !== false;
   $('allowedAppsToggle').checked = schedule.allowedAppsEnabled !== false;
   if ($('accountabilityToggle')) $('accountabilityToggle').checked = schedule.accountabilityEnabled === true;
@@ -1933,6 +1934,11 @@ function init() {
   });
 
   /* ---------- אייקון צף כשאינטרנט חסום ---------- */
+  if ($('autoUpdateToggle')) $('autoUpdateToggle').onchange = async () => {
+    if (!(await verifyPinSession())) { $('autoUpdateToggle').checked = schedule.autoUpdate !== false; return; }
+    schedule.autoUpdate = $('autoUpdateToggle').checked;
+    await persist();
+  };
   $('netIconToggle').onchange = async () => {
     if (!(await verifyPinSession())) {
       $('netIconToggle').checked = schedule.showNetIcon !== false;

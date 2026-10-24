@@ -70,6 +70,7 @@
       // פתיחה מרחוק מטלפון כשר (ימות המשיח + שרת ביניים). open = חלון הפתיחה
       // הנוכחי שנקבע מהטלפון: until=null → ללא הגבלה עד נעילה מהטלפון.
       remote: { enabled: false, relayUrl: '', deviceId: '', deviceKey: '', open: null },
+      autoUpdate: true,         // הורדה והתקנה אוטומטית של עדכון מאומת
       showNetIcon: true,        // אייקון צף קטן כשהמחשב פתוח והאינטרנט חסום
       blockBg: 'blobs',         // רקע מסך החסימה: blobs | fluid | particles | aurora
       showTorahQuotes: true,    // משפטי עידוד מהמקורות במסך החסימה
@@ -553,6 +554,7 @@
       recoveryPendingUntil: (s.recoveryPendingUntil !== null && s.recoveryPendingUntil !== undefined && s.recoveryPendingUntil !== '' && Number.isFinite(Number(s.recoveryPendingUntil)))
         ? Number(s.recoveryPendingUntil) : null,
       updateUrl: String(s.updateUrl || '').trim(),
+      autoUpdate: s.autoUpdate !== false,
       showNetIcon: s.showNetIcon !== false,
       blockBg: ['blobs', 'fluid', 'particles', 'aurora'].includes(s.blockBg) ? s.blockBg : 'blobs',
       showTorahQuotes: s.showTorahQuotes !== false,

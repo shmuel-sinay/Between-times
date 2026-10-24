@@ -14,7 +14,7 @@
     "test:update-live": "node --test --test-name-pattern=\"update:LIVE\" test/main-flow.test.js",
     "preview": "node scripts/build-preview.js",
     "postinstall": "node scripts/patch-nsis-template.js",
-    "dist": "node scripts/patch-nsis-template.js && node scripts/verify-installer-manifest.js --pre && electron-builder --win && node scripts/verify-installer-manifest.js"
+    "dist": "node scripts/patch-nsis-template.js && node scripts/verify-installer-manifest.js --pre && electron-builder --win --publish never && node scripts/verify-installer-manifest.js"
   },
   "devDependencies": {
     "electron": "^37.2.0",

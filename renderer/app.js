@@ -741,6 +741,7 @@ function applySettingsToUI() {
   if ($('accountabilityEmail')) $('accountabilityEmail').value = schedule.accountabilityEmail || '';
   if ($('accountabilityRequireApproval')) $('accountabilityRequireApproval').checked = schedule.accountabilityRequireApproval === true;
   if ($('coolOffInput')) $('coolOffInput').value = schedule.coolOffMinutes || 0;
+  renderRemote();
   if ($('studyModeToggle')) $('studyModeToggle').checked = !!(schedule.studyMode && schedule.studyMode.enabled);
   if ($('studyModeScope')) $('studyModeScope').value = (schedule.studyMode && schedule.studyMode.scope === 'always') ? 'always' : 'blocked';
   if ($('websiteModeSelect')) $('websiteModeSelect').value = websiteModeBlocklist() ? 'blocklist' : 'allowlist';
@@ -2476,3 +2477,38 @@ function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+// ===== פתיחה מרחוק מטלפון כשר =====
+async function renderRemote() {
+  if (!$('remoteStatus') || !API) return;
+  let r = {};
+  try { r = (await API.getSettings()).remote || {}; } catch { return; }
+  $('remoteRelay').value = r.relayUrl || '';
+  if (r.enabled && r.configured) {
+    const base = r.relayUrl || r.defaultRelayUrl || '';
+    $('remoteStatus').textContent = 'פעיל' + (r.open ? (r.open.until ? ' — פתוח מהטלפון עד ' + new Date(r.open.until).toLocaleString('he-IL') : ' — פתוח ללא הגבלה') : '');
+    $('remoteHelp').textContent = 'בשלוחת API בקו ימות המשיח הגדירו api_link לכתובת: ' + base + '?a=ivr&d=' + r.deviceId;
+  } else {
+    $('remoteStatus').textContent = 'כבוי';
+    $('remoteHelp').textContent = 'לאחר ההפעלה תופיע כאן הכתובת להגדרת שלוחת ה-API בקו ימות המשיח.';
+  }
+}
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => {
+    const save = $('remoteSaveBtn'), off = $('remoteOffBtn');
+    if (!save || !API) return;
+    save.addEventListener('click', async () => {
+      const res = await API.remoteSetup($('remoteCode').value.trim(), $('remoteRelay').value.trim());
+      if (!res.ok) return toast(res.error || 'ההפעלה נכשלה', 'error');
+      $('remoteCode').value = '';
+      renderRemote();
+      toast('הפתיחה מרחוק הופעלה');
+    });
+    off.addEventListener('click', async () => {
+      const res = await API.remoteDisable();
+      if (!res.ok) return toast(res.error || 'הכיבוי נכשל', 'error');
+      renderRemote();
+      toast('הפתיחה מרחוק כובתה');
+    });
+  });
+}

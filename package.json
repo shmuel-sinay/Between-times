@@ -28,6 +28,7 @@
       "main.js",
       "preload.js",
       "scheduler.js",
+      "remote-unlock.js",
       "locked-browser.js",
       "renderer/**/*",
       "assets/**/*",

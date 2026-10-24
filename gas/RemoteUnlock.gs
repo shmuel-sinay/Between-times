@@ -126,8 +126,8 @@ function remotePost(body) {
 /* ---------- תפריט קולי (ימות המשיח, שלוחת API) ---------- */
 
 function ivrRead(prompt, name, max, min) {
-  // read=t-<הקראה>=<שם>,,<מקס>,<מינ>,<המתנה>,NO,<חסימת כוכבית>,...,no(בלי תפריט אישור)
-  return 'read=t-' + prompt + '=' + [name, '', max, min, 7, 'NO', 'yes', '', '', '', '', '', '', '', 'no'].join(',');
+  // read=t-<הקראה>=<שם>,no,<מקס>,<מינ>,<המתנה>,No  (ללא הקראת הערך שהוקש)
+  return 'read=t-' + prompt + '=' + [name, 'no', max, min, 7, 'No'].join(',');
 }
 function ivrSay(text) {
   return 'id_list_message=t-' + text + '&go_to_folder=hangup';
@@ -138,6 +138,8 @@ function ivrText(s) {
 
 function ivrHandler(e) {
   var p = (e && e.parameter) || {};
+  // אבחון: רק שמות הפרמטרים (לעולם לא הערכים — הקוד לא נרשם)
+  console.log('ivr params: ' + Object.keys(p).join(','));
   if (String(p.hangup || '') === 'yes') return ivrText('noop');
   var d = String(p.d || '');
   if (!ruIsDeviceId(d)) return ivrText(ivrSay('קו לא מוגדר'));

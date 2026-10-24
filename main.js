@@ -4224,7 +4224,11 @@ async function remotePost(body) {
     redirect: 'follow',
     signal: AbortSignal.timeout(20000)
   });
-  return res.json();
+  // תשובה שאינה JSON (דף התחברות/שגיאה של גוגל, תשובה ריקה) מוצגת כמות שהיא — לאבחון.
+  const text = await res.text();
+  try { return JSON.parse(text); } catch {
+    throw new Error('תשובה לא צפויה מהשרת (HTTP ' + res.status + '): ' + text.replace(/\s+/g, ' ').slice(0, 160));
+  }
 }
 
 async function remoteSetup(code, relayUrl) {

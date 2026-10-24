@@ -1,8 +1,8 @@
 name: release
-# דוחפים תג v<גרסה> (שווה ל-package.json) → נבנה מתקין, נוצר Release, ו-version.json מתעדכן ב-main.
+# הרצה ידנית (Actions → release → Run workflow) → נבנה מתקין מגרסת package.json, נוצר תג ו-Release,
+# ו-version.json מתעדכן ב-main רק אחרי שה-Release קיים.
 on:
-  push:
-    tags: ['v*']
+  workflow_dispatch:
 permissions:
   contents: write
 jobs:
@@ -20,10 +20,9 @@ jobs:
         env: { GH_TOKEN: '${{ github.token }}' }
         run: |
           V=$(node -p "require('./package.json').version")
-          [ "v$V" = "${GITHUB_REF_NAME}" ] || { echo "tag/version mismatch"; exit 1; }
           F="dist/Setup.$V.exe"
           SHA=$(sha256sum "$F" | cut -d' ' -f1)
-          gh release create "v$V" "$F" --title "בין הזמנים $V" --notes-file release-notes.md --latest
+          gh release create "v$V" "$F" --target "$GITHUB_SHA" --title "בין הזמנים $V" --notes-file release-notes.md --latest
           SIZE=$(gh api repos/${{ github.repository }}/releases/tags/v$V --jq '.assets[0].size')
           [ "$SIZE" = "$(stat -c %s "$F")" ] || { echo "asset size mismatch"; exit 1; }
           echo "SHA=$SHA" >> $GITHUB_ENV

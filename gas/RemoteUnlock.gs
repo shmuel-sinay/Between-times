@@ -133,6 +133,7 @@ function ivrSay(text) {
   return 'id_list_message=t-' + text + '&go_to_folder=hangup';
 }
 function ivrText(s) {
+  console.log('ivr response: ' + s);
   return ContentService.createTextOutput(s).setMimeType(ContentService.MimeType.TEXT);
 }
 

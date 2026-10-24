@@ -159,7 +159,7 @@ function ivrHandler(e) {
         rec.locks = (rec.locks || 0) + 1;
         rec.lockUntil = now + Math.min(RU_MAX_LOCK_MS, RU_BASE_LOCK_MS * Math.pow(2, rec.locks - 1));
         rec.fails = 0;
-        msg = 'הקוד שגוי. הגישה ננעלה';
+        msg = 'הקוד שגוי, הגישה ננעלה';
       }
       ruSave(d, rec);
       return ivrText(ivrSay(msg));
@@ -167,7 +167,7 @@ function ivrHandler(e) {
     if (rec.fails) { rec.fails = 0; ruSave(d, rec); }
 
     if (!p.op) {
-      return ivrText(ivrRead('לפתיחה לזמן קצוב הקישו 1. לפתיחה עד שעה הקישו 2. לפתיחה בין שעות הקישו 3. לפתיחה ללא הגבלה הקישו 4. לנעילה הקישו 7', 'op', 1, 1));
+      return ivrText(ivrRead('לפתיחה לזמן קצוב הקישו 1, לפתיחה עד שעה הקישו 2, לפתיחה בין שעות הקישו 3, לפתיחה ללא הגבלה הקישו 4, לנעילה הקישו 7', 'op', 1, 1));
     }
     var type = null, a = '', b = '';
     if (p.op === '1') {
@@ -176,7 +176,7 @@ function ivrHandler(e) {
       if (!(mins >= 1 && mins <= 1440)) return ivrText(ivrSay('מספר דקות לא תקין'));
       type = 'for'; a = String(mins);
     } else if (p.op === '2') {
-      if (!p.p1) return ivrText(ivrRead('הקישו את שעת הסיום בארבע ספרות. לדוגמה עשרים ושתיים אפס אפס', 'p1', 4, 4));
+      if (!p.p1) return ivrText(ivrRead('הקישו את שעת הסיום בארבע ספרות, לדוגמה עשרים ושתיים אפס אפס', 'p1', 4, 4));
       if (!ruIsHHMM(p.p1)) return ivrText(ivrSay('שעה לא תקינה'));
       type = 'until'; a = p.p1;
     } else if (p.op === '3') {
@@ -196,6 +196,6 @@ function ivrHandler(e) {
     rec.cmds = (rec.cmds || []).filter(function (c) { return now - c.at < RU_CMD_TTL_MS; }).slice(-5);
     rec.cmds.push({ id: Utilities.getUuid().replace(/-/g, ''), type: type, a: a, b: b, at: now });
     ruSave(d, rec);
-    return ivrText(ivrSay('הפקודה התקבלה. המחשב יתעדכן בתוך כחצי דקה'));
+    return ivrText(ivrSay('הפקודה התקבלה, המחשב יתעדכן בתוך כחצי דקה'));
   });
 }

@@ -3276,7 +3276,7 @@ function unlockApprovalValid(code, purpose) {
 // (אין שדה בממשק) — הכפתור "בדוק עדכונים" משתמש בכתובת זו.
 // הקובץ version.json מתגורר במאגר הגיטהאב הציבורי, וכל שינוי בו
 // (גרסה חדשה) יימצא מיד על ידי כל העותקים המותקנים של התוכנה.
-const UPDATE_URL = 'https://raw.githubusercontent.com/Lev-Good/Between-times/main/version.json';
+const UPDATE_URL = 'https://raw.githubusercontent.com/shmuel-sinay/Between-times/main/version.json';
 const UPDATE_SIGNER_CN = 'Lev Tov Digital';
 
 async function sendRecovery() {
@@ -3449,7 +3449,7 @@ async function checkForUpdate(opts) {
    ההתקנה), מפעיל את המתקין בשקט (/S) וסוגר את התוכנה — והמתקין
    משלים את ההתקנה לבד ופותח את הגרסה החדשה. */
 
-const GITHUB_REPO = 'Lev-Good/Between-times';
+const GITHUB_REPO = 'shmuel-sinay/Between-times';
 const GITHUB_REPO_URL = 'https://github.com/' + GITHUB_REPO;
 const MAX_UPDATE_BYTES = 250 * 1024 * 1024;
 
